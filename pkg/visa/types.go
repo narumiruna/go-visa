@@ -6,17 +6,25 @@ import (
 	"time"
 )
 
-type RateOptions struct {
+type RatesRequest struct {
 	Amount           float64   `json:"amount"`
-	Fee              float64   `json:"fee"`
-	UTCConvertedDate time.Time `json:"utcConvertedDate"`
-	ExchangeDate     time.Time `json:"exchangedate"`
+	Fee              float64   `json:"fee,omitempty"`
+	UTCConvertedDate time.Time `json:"utcConvertedDate,omitempty"`
+	ExchangeDate     time.Time `json:"exchangedate,omitempty"`
 	FromCurr         string    `json:"fromCurr"`
 	ToCurr           string    `json:"toCurr"`
 }
 
-func (o *RateOptions) Values() url.Values {
+func (o *RatesRequest) Values() url.Values {
 	values := url.Values{}
+
+	if o.UTCConvertedDate.IsZero() {
+		o.UTCConvertedDate = time.Now()
+	}
+
+	if o.ExchangeDate.IsZero() {
+		o.ExchangeDate = time.Now()
+	}
 
 	values.Add("amount", fmt.Sprintf("%f", o.Amount))
 	values.Add("fee", fmt.Sprintf("%f", o.Fee))
@@ -57,7 +65,7 @@ func (o *RateOptions) Values() url.Values {
 //		"disclaimerDate":"May 1, 2023",
 //		"status":"success"
 //	}
-type RateResponse struct {
+type RatesResponse struct {
 	OriginalValues          OriginalValues `json:"originalValues"`
 	ConversionAmountValue   string         `json:"conversionAmountValue"`
 	ConversionBankFee       string         `json:"conversionBankFee"`

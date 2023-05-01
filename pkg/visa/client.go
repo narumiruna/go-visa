@@ -3,7 +3,6 @@ package visa
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -54,12 +53,11 @@ func (c *RestClient) NewRequest(ctx context.Context, method string, refURL strin
 }
 
 // https://www.visa.com.tw/cmsapi/fx/rates?amount=100000&fee=0&utcConvertedDate=05%2F01%2F2023&exchangedate=05%2F01%2F2023&fromCurr=TWD&toCurr=USD
-func (c *RestClient) QueryRates(ctx context.Context, options RateOptions) (*RateResponse, error) {
-	req, err := c.NewRequest(ctx, "GET", "/cmsapi/fx/rates", options.Values())
+func (c *RestClient) Rates(ctx context.Context, request RatesRequest) (response *RatesResponse, err error) {
+	req, err := c.NewRequest(ctx, "GET", "/cmsapi/fx/rates", request.Values())
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(req.URL)
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -72,10 +70,9 @@ func (c *RestClient) QueryRates(ctx context.Context, options RateOptions) (*Rate
 		return nil, err
 	}
 
-	var data RateResponse
-	if err := json.Unmarshal(body, &data); err != nil {
+	if err := json.Unmarshal(body, &response); err != nil {
 		return nil, err
 	}
 
-	return &data, nil
+	return response, nil
 }

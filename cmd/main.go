@@ -11,7 +11,7 @@ import (
 func main() {
 	c := visa.NewRestClient()
 	now := time.Now()
-	options := visa.RateOptions{
+	options := visa.RatesRequest{
 		Amount:           1,
 		FromCurr:         "USD",
 		ToCurr:           "TWD",
@@ -19,7 +19,7 @@ func main() {
 		UTCConvertedDate: now,
 		ExchangeDate:     now,
 	}
-	resp, err := c.QueryRates(context.Background(), options)
+	resp, err := c.Rates(context.Background(), options)
 	if err != nil {
 		panic(err)
 	}
