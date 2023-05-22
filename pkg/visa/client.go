@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const defaultTimeout = 15 * time.Second
+const defaultTimeout = 5 * time.Second
 const baseApiUrl = "https://www.visa.com.tw"
 
 type RestClient struct {
