@@ -3,6 +3,7 @@ module github.com/narumiruna/go-visa-fx-rates
 go 1.20
 
 require (
+	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/go-rod/rod v0.113.0
 	github.com/sirupsen/logrus v1.9.2
 )

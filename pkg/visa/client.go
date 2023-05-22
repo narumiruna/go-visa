@@ -10,7 +10,7 @@ import (
 )
 
 const defaultTimeout = 5 * time.Second
-const baseApiUrl = "https://www.visa.com.tw"
+const baseApiUrl = "http://www.visa.com.tw"
 
 type RestClient struct {
 	client  *http.Client
@@ -47,6 +47,9 @@ func (c *RestClient) NewRequest(ctx context.Context, method string, refURL strin
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36")
 
 	req = req.WithContext(ctx)
 	return req, nil
