@@ -20,7 +20,7 @@ func rate(request RatesRequest) (response *RatesResponse, err error) {
 	u.RawQuery = request.Values().Encode()
 	log.Infof("url: %s", u.String())
 
-	b := rod.New().Timeout(defaultTimeout)
+	b := rod.New()
 	defer b.MustClose()
 
 	// connect to browser
@@ -28,6 +28,9 @@ func rate(request RatesRequest) (response *RatesResponse, err error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// set timeout
+	b = b.Timeout(defaultTimeout)
 
 	page, err := b.Page(proto.TargetCreateTarget{URL: u.String()})
 	if err != nil {
