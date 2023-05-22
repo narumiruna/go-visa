@@ -6,7 +6,10 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
+
+	"github.com/avast/retry-go"
 )
 
 const defaultTimeout = 5 * time.Second
@@ -55,8 +58,8 @@ func (c *RestClient) NewRequest(ctx context.Context, method string, refURL strin
 	return req, nil
 }
 
-// https://www.visa.com.tw/cmsapi/fx/rates?amount=100000&fee=0&utcConvertedDate=05%2F01%2F2023&exchangedate=05%2F01%2F2023&fromCurr=TWD&toCurr=USD
-func (c *RestClient) Rates(ctx context.Context, request RatesRequest) (response *RatesResponse, err error) {
+// http://www.visa.com.tw/cmsapi/fx/rates?amount=100000&fee=0&utcConvertedDate=05%2F01%2F2023&exchangedate=05%2F01%2F2023&fromCurr=TWD&toCurr=USD
+func (c *RestClient) CalculateConversion(ctx context.Context, request RatesRequest) (response *RatesResponse, err error) {
 	req, err := c.NewRequest(ctx, "GET", "/cmsapi/fx/rates", request.Values())
 	if err != nil {
 		return nil, err
@@ -78,4 +81,33 @@ func (c *RestClient) Rates(ctx context.Context, request RatesRequest) (response 
 	}
 
 	return response, nil
+}
+
+func (c *RestClient) ExchangeRate(ctx context.Context, from, to string) (v float64, err error) {
+	err = retry.Do(
+		func() error {
+			now := time.Now()
+			request := RatesRequest{
+				Amount:           1.0,
+				UTCConvertedDate: now,
+				ExchangeDate:     now,
+				FromCurr:         from,
+				ToCurr:           to,
+			}
+			response, err := c.CalculateConversion(ctx, request)
+			if err != nil {
+				yesterday := now.AddDate(0, 0, -1)
+				request.UTCConvertedDate = yesterday
+				request.ExchangeDate = yesterday
+				response, err = c.CalculateConversion(ctx, request)
+				if err != nil {
+					return err
+				}
+			}
+
+			v, err = strconv.ParseFloat(response.ConvertedAmount, 64)
+			return err
+		},
+	)
+	return v, err
 }
