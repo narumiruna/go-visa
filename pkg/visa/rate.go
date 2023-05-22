@@ -75,5 +75,5 @@ func Rate(from, to string) (float64, error) {
 		}
 	}
 
-	return strconv.ParseFloat(response.ReverseAmount, 64)
+	return strconv.ParseFloat(response.FxRateWithAdditionalFee, 64)
 }

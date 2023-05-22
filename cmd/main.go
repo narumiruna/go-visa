@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	usdtwd, err := visa.Rate("USD", "TWD")
+	usdtwd, err := visa.Rate("TWD", "USD")
 	if err != nil {
 		panic(err)
 	}
