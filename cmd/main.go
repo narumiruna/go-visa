@@ -14,4 +14,15 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(r)
+
+	bidPrice, err := c.BidPrice(context.Background(), "USD", "TWD")
+	if err != nil {
+		panic(err)
+	}
+	askPrice, err := c.AskPrice(context.Background(), "USD", "TWD")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(bidPrice, askPrice)
 }

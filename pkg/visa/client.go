@@ -111,3 +111,15 @@ func (c *RestClient) ExchangeRate(ctx context.Context, from, to string) (v float
 	)
 	return v, err
 }
+
+func (c *RestClient) AskPrice(ctx context.Context, baseCurrency string, quoteCurrency string) (float64, error) {
+	return c.ExchangeRate(ctx, quoteCurrency, baseCurrency)
+}
+
+func (c *RestClient) BidPrice(ctx context.Context, baseCurrency string, quoteCurrency string) (float64, error) {
+	v, err := c.ExchangeRate(ctx, baseCurrency, quoteCurrency)
+	if err != nil {
+		return 0, err
+	}
+	return 1 / v, nil
+}
