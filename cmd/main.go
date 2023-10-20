@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/narumiruna/go-visa-fx-rates/pkg/visa"
+	"github.com/narumiruna/go-visa/pkg/visa"
 )
 
 func main() {

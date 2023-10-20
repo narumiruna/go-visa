@@ -1,1 +1,1 @@
-# go-visa-fx-rates
+# go-visa
